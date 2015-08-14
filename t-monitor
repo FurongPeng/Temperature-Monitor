@@ -1,0 +1,51 @@
+#!/bin/bash
+#
+# chkconfig: 35 90 12
+# description: Check the system temper
+#
+# Get function from functions library
+#. /etc/init.d/t-monitor
+# 
+#   
+
+start() {
+    if [ -f /var/lock/t-monitor ]; then
+	echo "service is already running"
+    else
+	# set the lock to indicate the service is running
+        touch /var/lock/t-monitor
+	bash /usr/local/t-monitor/t-monitor.sh &
+	echo "t-monitor is started success"	
+    fi
+    
+}
+# Restart the service temper monitor
+stop() {
+       # remove the lock to tell the service to stop
+       rm -f /var/lock/t-monitor
+       # wait the service to stop
+       sleep 2
+       # if the service is not stoped then kill it
+       pkill -f  s/*t-monitor.sh/
+       echo  "t-monirtor is stoped"
+}
+### main logic ###
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  status)
+        status temper_monitro
+        ;;
+  restart|reload|condrestart)
+        stop
+        start
+        ;;
+  *)
+        echo $"Usage: $0 {start|stop|restart|reload|status}"
+        exit 1
+esac
+exit 0
