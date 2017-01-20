@@ -23,7 +23,7 @@ while [ -f  /var/lock/t-monitor ] ;do
 	    array=(${array//./ })
 	    # b is the temperature
 	    b=${array[0]}
-	    if [ $b -gt $max_t ]; then 
+	    if [[ ${b} -gt ${max_t} ]]; then 
 		# Send notification
 		if [ $count = 0 ]; then
 		    echo "High temperature warrning" > $fmessage
