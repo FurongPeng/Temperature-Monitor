@@ -3,9 +3,9 @@
 #  pengfurong2009@gmail.com
 
 
-max_t=36  # the max temper.  the default is 37 
+max_t=28  # the max temper.  the default is 37
 count=0
-max_count=1200  #  check temperature in how many seconds. the default is 1200
+max_count=1000  #  check temperature in how many seconds. the default is 1200
 base="$(dirname $(readlink -f $0))"
 femail="${base}/email.cfg"  # email configuration file
 fmessage="${base}/message.txt"
@@ -20,7 +20,6 @@ my_sleep() {
   done
 }
 
-
 while [ -f  /var/lock/t-monitor ] ;do
     # reading temperature, the response is T1=+31.3 \n T2=+33.2
     # while loop to read the temperature line by line
@@ -34,8 +33,8 @@ while [ -f  /var/lock/t-monitor ] ;do
 	    array=${array[1]}
 	    array=(${array//./ })
 	    # b is the temperature
-	    b=${array[0]}
-	    if [[ ${b} -gt ${max_t} ]]; then 
+	    b=${array[0]//+/}
+            if [[ ${b} -gt ${max_t} ]]; then
 		# Send notification
 		if [ $count = 0 ]; then
 		    echo "High temperature warrning" > $fmessage
@@ -46,9 +45,8 @@ while [ -f  /var/lock/t-monitor ] ;do
 		# increasing the count
 		count=`expr $count + 1 `
 		count=`expr $count % $max_count `
-	    fi 
+	    fi
 	    # wait for 1 second
-	    my_sleep 10
         done
     my_sleep 10
 done
