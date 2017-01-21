@@ -29,6 +29,15 @@ stop() {
        pkill -f  s/*t-monitor.sh/
        echo  "t-monirtor is stoped"
 }
+
+status(){
+      if [ -f /var/lock/t-monitor ]; then
+          echo 't-monitor is running'
+      else
+          echo 't-monitor is stoped'
+      fi
+}
+
 ### main logic ###
 case "$1" in
   start)
@@ -38,7 +47,7 @@ case "$1" in
         stop
         ;;
   status)
-        status temper_monitro
+        status
         ;;
   restart|reload|condrestart)
         stop
