@@ -7,4 +7,4 @@ sudo make install
 sudo make uninstall
 
 # Email Account
-set the email count in email.cfg
+set the email account in email.cfg
