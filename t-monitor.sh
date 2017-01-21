@@ -9,6 +9,18 @@ max_count=1200  #  check temperature in how many seconds. the default is 1200
 base="$(dirname $(readlink -f $0))"
 femail="${base}/email.cfg"  # email configuration file
 fmessage="${base}/message.txt"
+
+my_sleep() {
+  for i in $(seq 1 2 $1)
+  do
+      sleep 0.1
+      if [ ! -f  /var/lock/t-monitor ]; then
+           break
+      fi
+  done
+}
+
+
 while [ -f  /var/lock/t-monitor ] ;do
     # reading temperature, the response is T1=+31.3 \n T2=+33.2
     # while loop to read the temperature line by line
@@ -36,7 +48,7 @@ while [ -f  /var/lock/t-monitor ] ;do
 		count=`expr $count % $max_count `
 	    fi 
 	    # wait for 1 second
-	    sleep 1
+	    my_sleep 10
         done
-    sleep 1
+    my_sleep 10
 done
