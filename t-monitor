@@ -5,8 +5,8 @@
 #
 # Get function from functions library
 #. /etc/init.d/t-monitor
-# 
-#   
+#
+#
 
 start() {
     if [ -f /var/lock/t-monitor ]; then
@@ -14,22 +14,31 @@ start() {
     else
 	# set the lock to indicate the service is running
         touch /var/lock/t-monitor
-	bash /usr/local/t-monitor/t-monitor.sh &
-	echo "t-monitor is started success"	
+        sleep 0.1
+        PATH=/usr/local/t-monitor:$PATH
+	t-monitor.sh &
+	echo "t-monitor is started success"
     fi
-    
+
 }
 # Restart the service temper monitor
 stop() {
        # remove the lock to tell the service to stop
        rm -f /var/lock/t-monitor
        # wait the service to stop
-       sleep 2
        # if the service is not stoped then kill it
+       while true; do
+           sleep 0.2
+           running=`ps aux | grep t-monitor.sh| grep -v grep |  wc -l`
+           if [ $running -gt 0 ]; then
+               pkill t-monitor.sh
+           else
+               break
+           fi
+       done
        pkill -f  s/*t-monitor.sh/
        echo  "t-monirtor is stoped"
 }
-
 status(){
       if [ -f /var/lock/t-monitor ]; then
           echo 't-monitor is running'
@@ -37,7 +46,6 @@ status(){
           echo 't-monitor is stoped'
       fi
 }
-
 ### main logic ###
 case "$1" in
   start)
